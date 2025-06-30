@@ -27,7 +27,6 @@
 
   <!-- Hero Section -->
   <section id="home" class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 bg-gradient-to-r from-purple-100 via-pink-100 to-blue-100">
-    <!-- Typing Title -->
     <h1 id="typed-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 text-indigo-700"></h1>
     <p class="text-lg text-gray-700">Find the best datasets for your project using machine learning!</p>
     <a href="#recommend" class="mt-6 bg-indigo-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition">🔍 Start Recommending</a>
@@ -36,31 +35,36 @@
   <!-- Form Section -->
   <section id="recommend" class="flex flex-col items-center justify-center px-4 py-10 bg-white">
     <form action="/" method="POST" class="bg-indigo-50 p-8 rounded-xl shadow-md max-w-xl w-full mb-8">
-      <h2 class="text-2xl font-bold mb-4 text-center text-indigo-700">Enter Dataset Name</h2>
-      <input name="dataset_name" placeholder="e.g. Hotel Reservations Dataset" class="w-full p-3 rounded border text-gray-800 mb-4" required>
+      <h2 class="text-2xl font-bold mb-4 text-center text-indigo-700">Enter Dataset Query</h2>
+      <input name="query" placeholder="e.g. Hotel Reservations, sales, images..." class="w-full p-3 rounded border text-gray-800 mb-4" required>
       <button class="bg-indigo-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-indigo-700 transition w-full">🔍 Recommend</button>
     </form>
 
     {% if error %}
       <p class="text-red-500 mb-4">{{ error }}</p>
     {% endif %}
+  </section>
 
-    {% if recs %}
-    <!-- Scrollable Result Box -->
-    <div class="w-full max-w-2xl bg-indigo-50 p-6 rounded-xl shadow-md max-h-80 overflow-y-auto">
-      <h3 class="text-2xl font-bold mb-4 text-center text-indigo-700">Recommendations for: "{{ input_name }}"</h3>
-      <ul class="space-y-4">
+  <!-- Modal Section (shown only if recommendations exist) -->
+  {% if recs %}
+  <div id="recModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white max-w-2xl w-full p-6 rounded-xl shadow-lg relative">
+      <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl font-bold">&times;</button>
+
+      <h3 class="text-2xl font-bold mb-4 text-center text-indigo-700">Recommendations for: "{{ query }}"</h3>
+      <ul class="space-y-4 max-h-[400px] overflow-y-auto">
         {% for rec in recs %}
-        <li class="bg-white p-4 rounded-lg shadow border border-indigo-100">
-          <h4 class="text-lg font-semibold text-indigo-600">{{ rec.name }}</h4>
-          <p>🔗 <a href="{{ rec.link }}" target="_blank" class="text-blue-600 underline">View Dataset</a></p>
-          <p class="text-sm text-gray-600">👍 Upvotes: {{ rec.upvotes }} | 💡 Usability: {{ rec.usability }}</p>
+        <li class="bg-indigo-50 p-4 rounded-lg shadow border border-indigo-100">
+          <h4 class="text-lg font-semibold text-indigo-600">{{ rec.Dataset_name }}</h4>
+          <p>👨‍💻 {{ rec.Author_name }}</p>
+          <p>🔗 <a href="{{ rec.Dataset_link }}" target="_blank" class="text-blue-600 underline">View Dataset</a></p>
+          <p class="text-sm text-gray-600">🔍 Similarity Score: {{ rec.Similarity }}</p>
         </li>
         {% endfor %}
       </ul>
     </div>
-    {% endif %}
-  </section>
+  </div>
+  {% endif %}
 
   <!-- About Section -->
   <section id="about" class="bg-purple-50 py-12 px-8 text-center">
@@ -94,9 +98,9 @@
   <section id="how" class="py-12 px-8 text-center bg-blue-50">
     <h2 class="text-3xl font-bold mb-6 text-blue-700">How It Works</h2>
     <ol class="max-w-2xl mx-auto text-left space-y-4 list-decimal list-inside text-gray-700">
-      <li>Enter a dataset name you're familiar with.</li>
-      <li>The system finds the most similar datasets using KNN.</li>
-      <li>Results are displayed instantly below the form.</li>
+      <li>Enter a dataset name you're familiar with or just a topic.</li>
+      <li>The system finds the most similar datasets using KNN + TF-IDF.</li>
+      <li>Results are displayed instantly in a popup.</li>
       <li>Click and explore your recommended datasets!</li>
     </ol>
   </section>
@@ -121,6 +125,26 @@
     }
 
     document.addEventListener("DOMContentLoaded", typeEffect);
+  </script>
+
+  <!-- Modal script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const closeBtn = document.getElementById("closeModal");
+      const modal = document.getElementById("recModal");
+
+      if (modal && closeBtn) {
+        closeBtn.addEventListener("click", function () {
+          modal.classList.add("hidden");
+        });
+
+        modal.addEventListener("click", function (e) {
+          if (e.target === modal) {
+            modal.classList.add("hidden");
+          }
+        });
+      }
+    });
   </script>
 
 </body>
