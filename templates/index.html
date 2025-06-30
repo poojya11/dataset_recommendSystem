@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>RecoData - Dataset Recommendation System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #f0f4ff, #e8f5e9);
+    }
+  </style>
+</head>
+<body class="text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md py-4 px-8 flex justify-between items-center">
+    <div class="text-2xl font-bold text-indigo-600">📊 RecoData</div>
+    <ul class="flex space-x-6 text-sm font-medium text-gray-700">
+      <li><a href="#home" class="hover:text-indigo-600">Home</a></li>
+      <li><a href="#about" class="hover:text-indigo-600">About</a></li>
+      <li><a href="#features" class="hover:text-indigo-600">Features</a></li>
+      <li><a href="#how" class="hover:text-indigo-600">How it works</a></li>
+      <li><a href="/" class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full hover:bg-indigo-200 transition">Get Started</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 bg-gradient-to-r from-purple-100 via-pink-100 to-blue-100">
+    <!-- Typing Title -->
+    <h1 id="typed-heading" class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 text-indigo-700"></h1>
+    <p class="text-lg text-gray-700">Find the best datasets for your project using machine learning!</p>
+    <a href="#recommend" class="mt-6 bg-indigo-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition">🔍 Start Recommending</a>
+  </section>
+
+  <!-- Form Section -->
+  <section id="recommend" class="flex flex-col items-center justify-center px-4 py-10 bg-white">
+    <form action="/" method="POST" class="bg-indigo-50 p-8 rounded-xl shadow-md max-w-xl w-full mb-8">
+      <h2 class="text-2xl font-bold mb-4 text-center text-indigo-700">Enter Dataset Name</h2>
+      <input name="dataset_name" placeholder="e.g. Hotel Reservations Dataset" class="w-full p-3 rounded border text-gray-800 mb-4" required>
+      <button class="bg-indigo-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-indigo-700 transition w-full">🔍 Recommend</button>
+    </form>
+
+    {% if error %}
+      <p class="text-red-500 mb-4">{{ error }}</p>
+    {% endif %}
+
+    {% if recs %}
+    <!-- Scrollable Result Box -->
+    <div class="w-full max-w-2xl bg-indigo-50 p-6 rounded-xl shadow-md max-h-80 overflow-y-auto">
+      <h3 class="text-2xl font-bold mb-4 text-center text-indigo-700">Recommendations for: "{{ input_name }}"</h3>
+      <ul class="space-y-4">
+        {% for rec in recs %}
+        <li class="bg-white p-4 rounded-lg shadow border border-indigo-100">
+          <h4 class="text-lg font-semibold text-indigo-600">{{ rec.name }}</h4>
+          <p>🔗 <a href="{{ rec.link }}" target="_blank" class="text-blue-600 underline">View Dataset</a></p>
+          <p class="text-sm text-gray-600">👍 Upvotes: {{ rec.upvotes }} | 💡 Usability: {{ rec.usability }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="bg-purple-50 py-12 px-8 text-center">
+    <h2 class="text-3xl font-bold mb-4 text-purple-700">About This Project</h2>
+    <p class="max-w-3xl mx-auto text-gray-700 text-lg">
+      This system uses machine learning and metadata analysis to recommend the most suitable datasets
+      based on your query, preferences, and project domain.
+    </p>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-12 px-8 bg-pink-50 text-center">
+    <h2 class="text-3xl font-bold mb-6 text-pink-700">Key Features</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="text-xl font-semibold mb-2 text-indigo-600">🔍 Smart Matching</h3>
+        <p class="text-gray-700">Find datasets that match your needs using KNN and metadata.</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="text-xl font-semibold mb-2 text-indigo-600">⚙️ Lightweight Model</h3>
+        <p class="text-gray-700">Fast recommendations based on preprocessed and scaled features.</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h3 class="text-xl font-semibold mb-2 text-indigo-600">📁 Open Data Sources</h3>
+        <p class="text-gray-700">Works with datasets from Kaggle, UCI, and public repositories.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section id="how" class="py-12 px-8 text-center bg-blue-50">
+    <h2 class="text-3xl font-bold mb-6 text-blue-700">How It Works</h2>
+    <ol class="max-w-2xl mx-auto text-left space-y-4 list-decimal list-inside text-gray-700">
+      <li>Enter a dataset name you're familiar with.</li>
+      <li>The system finds the most similar datasets using KNN.</li>
+      <li>Results are displayed instantly below the form.</li>
+      <li>Click and explore your recommended datasets!</li>
+    </ol>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-indigo-100 text-center py-6 mt-8">
+    <p class="text-indigo-700">Made with ❤️ by Your Name &middot; © 2025 RecoData</p>
+  </footer>
+
+  <!-- Typing effect -->
+  <script>
+    const text = "🚀 Dataset Recommendation System";
+    const heading = document.getElementById("typed-heading");
+    let index = 0;
+
+    function typeEffect() {
+      if (index < text.length) {
+        heading.textContent += text.charAt(index);
+        index++;
+        setTimeout(typeEffect, 100);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", typeEffect);
+  </script>
+
+</body>
+</html>
