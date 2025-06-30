@@ -2,8 +2,9 @@ from flask import Flask, render_template, request
 import pickle
 import pandas as pd
 from difflib import get_close_matches
+import os
 
-# Load model and supporting data from pickle
+# Load model
 with open("reco_model.pkl", "rb") as f:
     data = pickle.load(f)
 
@@ -12,13 +13,11 @@ df = data["df"]
 scaler = data["scaler"]
 features_scaled = data["features_scaled"]
 
-# Match user input to closest dataset name
 def get_best_match(name_input):
     names = df['Dataset_name'].tolist()
     match = get_close_matches(name_input, names, n=1, cutoff=0.4)
     return match[0] if match else None
 
-# Get recommendations using KNN
 def get_recommendations_by_name(name):
     try:
         index = df[df['Dataset_name'].str.lower() == name.lower()].index[0]
@@ -27,7 +26,7 @@ def get_recommendations_by_name(name):
 
     distances, indices = knn.kneighbors([features_scaled[index]])
     recs = []
-    for i in indices[0][1:]:  # Skip the original input
+    for i in indices[0][1:]:  # skip the input itself
         recs.append({
             'name': df.iloc[i]['Dataset_name'],
             'link': df.iloc[i]['Dataset_link'],
@@ -36,7 +35,7 @@ def get_recommendations_by_name(name):
         })
     return recs
 
-# Flask app setup
+# Initialize Flask app
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -56,6 +55,6 @@ def home():
 
     return render_template("index.html", recs=recommendations, input_name=input_name, error=error)
 
-# Run app on port 5001 to avoid conflict
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    port = int(os.environ.get("PORT", 5000))  # Use Render's assigned port or default to 5000
+    app.run(host="0.0.0.0", port=port, debug=True)
